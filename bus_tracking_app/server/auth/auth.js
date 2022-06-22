@@ -1,0 +1,77 @@
+const express =require("express")
+const bcrypt=require("bcryptjs")
+const webtoken=require("jsonwebtoken")
+const User = require("../models/user")
+
+const authRouter=express.Router()
+
+authRouter.post("/api/signup",async(req,res)=>{
+
+    console.log("authenticating")
+
+        try{
+            const {email,password,name}=req.body
+
+            const existingUser= await User.findOne({email})
+            
+            if(existingUser){
+                return res.status(400).json({msg:"user already exists"})
+            }
+            
+            const hashedpassword=bcrypt.hashSync(password,8)
+            
+            let user=new User({
+                email,
+                password:hashedpassword,
+                name
+            })
+            
+            user= await user.save()
+            res.json(user)
+        }catch(e){
+                res.status(500).json({error:e.message})
+        }
+})
+
+authRouter.post("/api/signin",async(req,res)=>{
+        
+      console.log("trying to sign in")
+        try{
+            const {email,password}=req.body;
+
+        const existinguser= await User.findOne({email});
+        
+        if(existinguser==null){
+            return res.status(400).json({msg:"email doesn't exist"})
+        }
+
+        const isCorrect=await bcrypt.compare(password, existinguser.password)
+        
+        
+        if(isCorrect==false){
+            console.log("incorrect password")
+            return res.status(400).json({msg:"Incorrect password"})
+        }
+
+        const token=webtoken.sign({id:existinguser._id},"webtokenkey")
+        
+        return res.status(200).json({token:token,...existinguser._doc})
+    }catch(e){
+        res.status(500).json({error:e.message})
+    }
+              
+})
+
+authRouter.get("/api/getuser",async(req,res)=>{
+
+        try{
+            const users=await User.find()
+            return res.json({users:users})
+        }catch(e){
+            res.status(500).json({error:e.message})
+        }
+})
+
+
+
+module.exports=authRouter
