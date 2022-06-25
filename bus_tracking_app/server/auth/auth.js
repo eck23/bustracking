@@ -62,11 +62,11 @@ authRouter.post("/api/signin",async(req,res)=>{
               
 })
 
-authRouter.get("/api/getuser",async(req,res)=>{
+authRouter.get("/api/test",async(req,res)=>{
 
         try{
-            const users=await User.find()
-            return res.json({users:users})
+            
+            res.json({msg:"SIM900 HTTP TEST"})
         }catch(e){
             res.status(500).json({error:e.message})
         }
