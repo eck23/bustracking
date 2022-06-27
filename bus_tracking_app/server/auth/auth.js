@@ -42,20 +42,21 @@ authRouter.post("/api/signin",async(req,res)=>{
         const existinguser= await User.findOne({email});
         
         if(existinguser==null){
-            return res.status(400).json({msg:"email doesn't exist"})
+            return res.status(400).json({msg:"Invalid Email"})
         }
 
         const isCorrect=await bcrypt.compare(password, existinguser.password)
         
         
         if(isCorrect==false){
-            console.log("incorrect password")
+            // console.log("incorrect password")
             return res.status(400).json({msg:"Incorrect password"})
         }
 
         const token=webtoken.sign({id:existinguser._id},"webtokenkey")
         
-        return res.status(200).json({token:token,...existinguser._doc})
+        var user=existinguser._doc
+        return res.status(200).json({token:token,email:user['email'],name:user['name']})
     }catch(e){
         res.status(500).json({error:e.message})
     }

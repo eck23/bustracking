@@ -1,6 +1,7 @@
-import 'package:bus_tracking_app/login/loginpage.dart';
+import 'package:bus_tracking_app/busapp.dart';
+import 'package:bus_tracking_app/providers/authlisten.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -11,17 +12,15 @@ class Main extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-     return ScreenUtilInit(
-      
-      builder: (context , child){
-        return  MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: MyLogin(),
-        );
-      }
+     return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) =>AuthListen()),
+      ],
+       child:BusApp()
      );
   }
 }
+
 
 
 

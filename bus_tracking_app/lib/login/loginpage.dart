@@ -1,7 +1,9 @@
 import 'package:bus_tracking_app/login/styles.dart';
+import 'package:bus_tracking_app/providers/authlisten.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../authentication/authfunctions.dart';
 
@@ -20,8 +22,12 @@ TextEditingController usercontroller=TextEditingController();
 TextEditingController passcontroller=TextEditingController();
 
 
-
 final formKey = GlobalKey<FormState>();  
+
+
+
+var emailValid;  //validate msg for email
+var passValid;  //validate msg for password
 
 
 @override
@@ -32,44 +38,84 @@ final formKey = GlobalKey<FormState>();
   super.dispose();
 }
 
-//changePageOnLogin()=>Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>FirstPage()));
-//changePage()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>FirstPage()));
-
-
-
-
-
-onRegisterClick()async {
-  
-   if( formKey.currentState!.validate()){
-          // print("in register");
-          var res=await Auth.callSignUp(email: usercontroller.text.trim(),password: passcontroller.text.trim(),name: "Myname");
-
-          print("response $res");
-          
-          // usercontroller.clear();
-          // passcontroller.clear();
-         
-
-   }
-  
-
+loading() {
+  showDialog(
+    barrierDismissible: false,
+    builder: (ctx) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.blue.shade700,
+          strokeWidth: 5,
+        ),
+      );
+    },
+    context: context,
+  );
 }
 
 onLoginClick()async{
-    var email=usercontroller.text.trim();
-    var password=passcontroller.text.trim();
 
-    // print("email : $email");
-    // print("password : $password");
-    var res=await Auth.callSignIn(email:email ,password: password);
+  var email=usercontroller.text.trim();
+  var password=passcontroller.text.trim();
 
-          print("response $res");
+  emailValid=null;
+  passValid=null;
+ 
+
+
+  if(email.isNotEmpty && password.isNotEmpty){
+
+  loading();
+  
+  var response = await Auth.callSignIn(email: email, password: password);
+ 
+  Navigator.pop(context);
+  
+  if(response=="OK"){
+     Provider.of<AuthListen>(context,listen: false).signInUser();
+     
+  }
+  else{
+
+        if(response=="Invalid Email"){
           
-          // usercontroller.clear();
-          // passcontroller.clear();
+          emailValid="Invalid Email";
+          passValid=null;
+          
+        }
+        else if(response=="Incorrect password"){
 
+          passValid=response;
+          emailValid=null;
+          
+        }
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error in Signing In")));
+        }
+
+        
+
+    }
+  }else{
+
+         if(email.isEmpty){
+            emailValid="Email cannot be empty";
+          }
+
+      if(password.isEmpty){
+           passValid="Password cannot be empty";
+      }
+  }
+  formKey.currentState!.validate();
+  
+  
 }
+
+
+
+
+
+
 
 
   @override
@@ -135,14 +181,7 @@ onLoginClick()async{
                             child: TextFormField(
                               controller: usercontroller ,
                               decoration: InputDecoration(hintText: "Email"),
-                              validator: (val){
-                                  var value=val!.trim();
-                                  if(value.isEmpty){
-                                    return "Email cannot be empty";
-                                  }
-                                  
-                                  return null;
-                              },
+                              validator: (val)=>emailValid,
                               ))
                         ],
                       ),
@@ -161,16 +200,7 @@ onLoginClick()async{
                             controller: passcontroller,
                             obscureText: true,
                             decoration: InputDecoration(hintText: "Password"),
-                            validator: (val){
-
-                               var value=val!.trim();
-                                  if(value.isEmpty){
-                                    return "Password cannot be empty";
-                                  }
-                                  
-                                  return null;
-                                  
-                            },
+                            validator: (val)=>passValid,
                             ))
                       ],
                     ),
@@ -202,7 +232,7 @@ onLoginClick()async{
             
                   SizedBox(
                     width: buttonwidth,
-                    child: ElevatedButton(onPressed: onRegisterClick, child: Text("Register",style: buttonTextStyle,),style: regbuttonstyle,))
+                    child: ElevatedButton(onPressed: null, child: Text("Register",style: buttonTextStyle,),style: regbuttonstyle,))
                 ],
               ),
             ),

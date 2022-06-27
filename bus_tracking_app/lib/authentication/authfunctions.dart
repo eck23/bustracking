@@ -1,7 +1,9 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:bus_tracking_app/authentication/user.dart';
+import 'package:bus_tracking_app/authentication/user_details.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 //String url="http://bustrack.azurewebsites.net";
@@ -31,22 +33,65 @@ class Auth{
 
   }
 
+  static signOut()async {
+      SharedPreferences shared_User = await SharedPreferences.getInstance();
+      shared_User.remove('user');
+  }
+
+  static getuser()async{
+      SharedPreferences shared_User = await SharedPreferences.getInstance();
+      var user=shared_User.getString('user');
+      print(user);
+      var returnval=user!=null?"OK":"Error";
+      
+      return returnval;
+      
+      // Map<String,dynamic> userMap = jsonDecode(getuser!) as Map<String, dynamic>;
+      // print("user: ${userMap['email']} ");
+  }
+
+  static saveuser(var response)async{
+      SharedPreferences shared_User = await SharedPreferences.getInstance();
+      await shared_User.setString('user',jsonEncode( response));
+  }
+
   static Future callSignIn({required String email,required String password})async{
 
       var body={"email":email,"password":password};
 
      // print(body);
+     http.Response response;
       try{
 
-          var response = await http.post(Uri.parse("$url/api/signin"),
+          response = await http.post(Uri.parse("$url/api/signin"),
                                 body: jsonEncode(body),
                                 headers:<String,String>{'content-type': "application/json"}
                         );
-           return response.body;
+           
+          
+          if(response.statusCode==200){
+
+             var res=jsonDecode(response.body);
+             await saveuser(res);
+
+             return "OK";
+
+          }
+          else{
+            
+             if(response.statusCode==400){
+                return jsonDecode(response.body)['msg'];
+             }
+             else{
+              return "Error";
+             }
+          }
+
+
+           
 
       }catch(e){
-           return 500;
+          return "Error";
       }
-  }
-
+    }
 }
