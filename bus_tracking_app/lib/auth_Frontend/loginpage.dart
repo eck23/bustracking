@@ -1,11 +1,12 @@
-import 'package:bus_tracking_app/login/styles.dart';
+import 'package:bus_tracking_app/auth_Frontend/reg.dart';
+import 'package:bus_tracking_app/auth_Frontend/styles.dart';
 import 'package:bus_tracking_app/providers/authlisten.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
 import '../authentication/authfunctions.dart';
+import '../widgets/widgets.dart';
 
 
 
@@ -30,7 +31,7 @@ var emailValid;  //validate msg for email
 var passValid;  //validate msg for password
 
 
-@override
+@override                         
   void dispose(){
 
   usercontroller.dispose();
@@ -38,20 +39,7 @@ var passValid;  //validate msg for password
   super.dispose();
 }
 
-loading() {
-  showDialog(
-    barrierDismissible: false,
-    builder: (ctx) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Colors.blue.shade700,
-          strokeWidth: 5,
-        ),
-      );
-    },
-    context: context,
-  );
-}
+
 
 onLoginClick()async{
 
@@ -65,7 +53,7 @@ onLoginClick()async{
 
   if(email.isNotEmpty && password.isNotEmpty){
 
-  loading();
+  loading(context);
   
   var response = await Auth.callSignIn(email: email, password: password);
  
@@ -90,7 +78,7 @@ onLoginClick()async{
           
         }
         else{
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error in Signing In")));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Error in Signing In")));
         }
 
         
@@ -112,13 +100,7 @@ onLoginClick()async{
 }
 
 
-
-
-
-
-
-
-  @override
+@override
   Widget build(BuildContext context) {
         
         return SafeArea(
@@ -159,7 +141,7 @@ onLoginClick()async{
                 children: [
                     Padding(
                       padding:  EdgeInsets.only(top: 15.h,bottom:15.h ),
-                      child: Text("Login",style: GoogleFonts.aladin(color: Colors.black,fontSize: 40.sp,fontWeight: FontWeight.bold),),
+                      child: Text("Login",style:authHeading,),
                     ),
             
                   Form(
@@ -180,7 +162,8 @@ onLoginClick()async{
                             
                             child: TextFormField(
                               controller: usercontroller ,
-                              decoration: InputDecoration(hintText: "Email"),
+                              textInputAction: TextInputAction.next,
+                              decoration: const InputDecoration(hintText: "Email"),
                               validator: (val)=>emailValid,
                               ))
                         ],
@@ -199,7 +182,8 @@ onLoginClick()async{
                           child: TextFormField(
                             controller: passcontroller,
                             obscureText: true,
-                            decoration: InputDecoration(hintText: "Password"),
+                            textInputAction: TextInputAction.done,
+                            decoration: const InputDecoration(hintText: "Password"),
                             validator: (val)=>passValid,
                             ))
                       ],
@@ -232,7 +216,7 @@ onLoginClick()async{
             
                   SizedBox(
                     width: buttonwidth,
-                    child: ElevatedButton(onPressed: null, child: Text("Register",style: buttonTextStyle,),style: regbuttonstyle,))
+                    child: ElevatedButton(onPressed:()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterPage())) , child: Text("Create Account",style: buttonTextStyle,),style: regbuttonstyle,))
                 ],
               ),
             ),

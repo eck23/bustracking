@@ -1,12 +1,12 @@
 
 import 'package:bus_tracking_app/authentication/authfunctions.dart';
-import 'package:bus_tracking_app/login/loginpage.dart';
-import 'package:bus_tracking_app/providers/authlisten.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import '../providers/authlisten.dart';
 
 class FirstPage extends StatefulWidget{
 

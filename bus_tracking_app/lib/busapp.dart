@@ -1,8 +1,9 @@
-import 'package:bus_tracking_app/login/firstpage.dart';
-import 'package:bus_tracking_app/login/loginpage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'auth_Frontend/firstpage.dart';
+import 'auth_Frontend/loginpage.dart';
 import 'authentication/authfunctions.dart';
 import 'providers/authlisten.dart';
 
