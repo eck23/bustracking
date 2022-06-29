@@ -1,6 +1,10 @@
 import 'package:bus_tracking_app/auth_Frontend/styles.dart';
+import 'package:bus_tracking_app/authentication/authfunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import '../providers/authlisten.dart';
+import '../widgets/widgets.dart';
 
 class RegisterPage extends StatefulWidget{
 
@@ -9,26 +13,107 @@ class RegisterPage extends StatefulWidget{
 }
 
 class _RegisterState extends State<RegisterPage> {
+
+
+var emailValid;
+var passValid;
+var confirmPassValid;
+var nameValid;
+
+TextEditingController nameController=TextEditingController();
+TextEditingController emailController=TextEditingController();
+TextEditingController passController=TextEditingController();
+TextEditingController confirmPassController=TextEditingController();
+
+final regFormKey = GlobalKey<FormState>();  
+
+onRegClick()async{
+
+  var email=emailController.text.trim();
+  var name=nameController.text.trim();
+  var password=passController.text.trim();
+  var confirmPass=confirmPassController.text.trim();
+
+  emailValid=null;
+  passValid=null;
+  confirmPassValid=null;
+  nameValid=null;
+
+
+  if(name.isNotEmpty && email.isNotEmpty && password.isNotEmpty && confirmPass.isNotEmpty && confirmPass==password){
+
+    loading(context);
+    
+    var response =await Auth.callSignUp(email: email, password: password,name: name);
+
+    Navigator.pop(context);
+    print("resposne $response");
+    
+    if(response=="OK"){
+     Provider.of<AuthListen>(context,listen: false).signInUser();
+     Navigator.pop(context);
+     
+   }
+    else{
+        
+        if(response=="Email Already Exists"){
+          
+          emailValid=response;
+          
+        }
+        else if(response=="Invalid"){
+          emailValid="Invalid Email Format";
+        }
+        
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Error in Signing Up")));
+        }
+
+  }
+
+  }else{
+
+       if(name.isEmpty){
+        nameValid="Name Cannot be Empty";
+      }
+      if(email.isEmpty){
+        emailValid="Email cannot be empty";
+      }
+      if(password.isEmpty){
+        passValid="Password cannot be empty";
+      }
+      if(password!=confirmPass){
+        confirmPassValid="Passwords doesn't match";
+      }
+
+
+  }
+  regFormKey.currentState!.validate();
+}
+
   @override
   Widget build(BuildContext context) {
 
-      return SafeArea(
-        child: Scaffold(
-              body: SingleChildScrollView(
-                child: Stack(
-                  children: 
-                   [
-                      Container(
-                        height: 320.h,
-                        width: 300.w,
-                        
-                        child: Image.asset("assets/image.png")),
-                      regContainer(),
-                    ],
+      return GestureDetector(
+        onTap: () =>FocusScope.of(context).unfocus() ,
+        child: SafeArea(
+          child: Scaffold(
+                body: SingleChildScrollView(
+                  child: Stack(
+                    children: 
+                     [
+                        Container(
+                          height: 320.h,
+                          width: 300.w,
+                          
+                          child: Image.asset("assets/image.png")),
+                        regContainer(),
+                      ],
+                    ),
                   ),
-                ),
-              
-          ),
+                
+            ),
+        ),
       );
   }
 
@@ -60,7 +145,7 @@ class _RegisterState extends State<RegisterPage> {
                     child: Text("Create Account",style:authHeading,),
                 ),
                  Form(
-                        // key: formKey,
+                         key: regFormKey,
                         child: Column(
                         
                         children: [
@@ -76,11 +161,11 @@ class _RegisterState extends State<RegisterPage> {
                               width:textContainerWidth,
                               
                               child: TextFormField(
-                                // controller: passcontroller,
-                                obscureText: true,
+                                controller: nameController,
+                                
                                 textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(hintText: "Name"),
-                                // validator: (val)=>passValid,
+                                validator: (val)=>nameValid,
                                 ))
                           ],
                         ),
@@ -96,10 +181,10 @@ class _RegisterState extends State<RegisterPage> {
                                 width:textContainerWidth,
                                 
                                 child: TextFormField(
-                                  // controller: usercontroller ,
+                                  controller: emailController ,
                                   textInputAction: TextInputAction.next,
                                   decoration: InputDecoration(hintText: "Email"),
-                                  // validator: (val)=>emailValid,
+                                  validator: (val)=>emailValid,
                                   ))
                             ],
                           ),
@@ -116,11 +201,11 @@ class _RegisterState extends State<RegisterPage> {
                               width:textContainerWidth,
                               
                               child: TextFormField(
-                                // controller: passcontroller,
+                                controller: passController,
                                 obscureText: true,
                                 textInputAction: TextInputAction.next,
                                 decoration: InputDecoration(hintText: "Password"),
-                                // validator: (val)=>passValid,
+                                validator: (val)=>passValid,
                                 ))
                           ],
                         ),
@@ -136,11 +221,11 @@ class _RegisterState extends State<RegisterPage> {
                               width:textContainerWidth,
                               
                               child: TextFormField(
-                                // controller: passcontroller,
+                                controller: confirmPassController,
                                 obscureText: true,
                                 textInputAction: TextInputAction.done,
                                 decoration: InputDecoration(hintText: "Confirm Password"),
-                                // validator: (val)=>passValid,
+                                validator: (val)=>confirmPassValid,
                                 ))
                           ],
                         ),
@@ -151,7 +236,7 @@ class _RegisterState extends State<RegisterPage> {
                       padding: EdgeInsets.only(top: 30.h),
                       child: SizedBox(
                           width: buttonwidth,
-                          child: ElevatedButton(onPressed:null , child: Text("Create Account",style: buttonTextStyle,),style: regbuttonstyle,)),
+                          child: ElevatedButton(onPressed:onRegClick , child: Text("Create Account",style: buttonTextStyle,),style: regbuttonstyle,)),
                     )
           ]),
         ),

@@ -3,7 +3,6 @@ import 'package:bus_tracking_app/auth_Frontend/styles.dart';
 import 'package:bus_tracking_app/providers/authlisten.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../authentication/authfunctions.dart';
 import '../widgets/widgets.dart';

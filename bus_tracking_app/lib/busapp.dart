@@ -26,7 +26,7 @@ class _BusAppState extends State<BusApp> {
 
   findUser()async{
 
-      String res=await Auth.getuser();
+      String res=await Auth.getUserFromLocal();
 
       // print(res);
       
