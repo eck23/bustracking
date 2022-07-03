@@ -5,6 +5,8 @@ const express=require("express")
 const mongoose=require("mongoose")
 const http=require('http')
 const User = require("./models/user.js")
+const stopRouter = require("./trip/stoproute.js")
+const tripsRouter = require("./trip/triproute.js")
 
 const app =express()
 const server=http.createServer(app)
@@ -19,6 +21,8 @@ const DB="mongodb+srv://eck_base:minnalproject@cluster0.35jc7.mongodb.net/?retry
 app.use(express.json())
 // app.use(io)
 app.use(authRouter)
+app.use(stopRouter)
+app.use(tripsRouter)
 //
 
 mongoose.connect(DB).then(()=>{

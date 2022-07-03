@@ -63,11 +63,11 @@ authRouter.post("/api/signin",async(req,res)=>{
               
 })
 
-authRouter.get("/api/test",async(req,res)=>{
+authRouter.get("/api/test.json",async(req,res)=>{
 
         try{
             
-            res.json({msg:"SIM900 HTTP TEST"})
+            res.json({msg:"SIM900 HTTP TEST",lat:92.66666,long:78.90999})
         }catch(e){
             res.status(500).json({error:e.message})
         }

@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 
 
 
+
+
 void main()=>runApp(Main());
 
 class Main extends StatelessWidget{
@@ -15,6 +17,7 @@ class Main extends StatelessWidget{
      return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) =>AuthListen()),
+        
       ],
        child:BusApp()
      );
