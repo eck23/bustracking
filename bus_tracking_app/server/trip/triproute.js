@@ -28,7 +28,7 @@ tripsRouter.get("/api/gettrips/:id",async(req,res)=>{
             
                 if(doc){
                     for(var item in doc.stops){
-                        result.push({lat:doc.stops[item].latitude,long:doc.stops[item].longitude})
+                        result.push({stopId :doc.stops[item].stopId,lat:doc.stops[item].latitude,long:doc.stops[item].longitude})
                     
                         }
                     
@@ -43,4 +43,23 @@ tripsRouter.get("/api/gettrips/:id",async(req,res)=>{
     }
 })
 
+tripsRouter.post("/api/updatetrip",async(req,res)=>{
+
+        const{id,isReached,stopId}=req.body
+
+       try{
+        Trips.updateOne(
+            {"_id":id,"stops.stopId":stopId},
+            {"$set":{"stops.$.isReached":isReached}},
+            function (err,trip){
+                return res.status(200).json({msg:"ok"})
+            }
+           )
+        
+       
+       
+        }catch(e){
+        return res.status(200).json({msg:"error"})
+       }
+})
 module.exports=tripsRouter
