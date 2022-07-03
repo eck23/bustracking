@@ -28,24 +28,14 @@ stopRouter.post("/api/addstop",async(req,res)=>{
                 longitude
             })
             await stop.save()
-            res.status(200).json({msg:"successfully added"})
+            return res.status(200).json({msg:"successfully added"})
 
 
         }catch(e){
-            res.status(500).json({error:e.message})
+           return  res.status(500).json({error:e.message})
         }
 })
 
-stopRouter.post("/api/testpost",async(req,res)=>{
 
-    try{
-        const {lat,long} =req.body
-        res.status(200).json({lat:lat,long:long})
-
-    }catch(e){
-            res.status(500).json({msg:"Error"})
-    }
-
-})
 
 module.exports=stopRouter

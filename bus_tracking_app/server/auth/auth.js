@@ -27,9 +27,9 @@ authRouter.post("/api/signup",async(req,res)=>{
             })
             
             user= await user.save()
-            res.status(200).json(user)
+           return res.status(200).json(user)
         }catch(e){
-                res.status(500).json({error:e.message})
+               return res.status(500).json({error:e.message})
         }
 })
 
@@ -58,20 +58,12 @@ authRouter.post("/api/signin",async(req,res)=>{
         var user=existinguser._doc
         return res.status(200).json({token:token,email:user['email'],name:user['name']})
     }catch(e){
-        res.status(500).json({error:e.message})
+       return res.status(500).json({error:e.message})
     }
               
 })
 
-authRouter.get("/api/test.json",async(req,res)=>{
 
-        try{
-            
-            res.json({msg:"SIM900 HTTP TEST",lat:92.66666,long:78.90999})
-        }catch(e){
-            res.status(500).json({error:e.message})
-        }
-})
 
 
 
