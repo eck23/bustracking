@@ -52,7 +52,9 @@ tripsRouter.post("/api/updatetrip",async(req,res)=>{
             {"_id":id,"stops.stopId":stopId},
             {"$set":{"stops.$.isReached":isReached}},
             function (err,trip){
-                return res.status(200).json({msg:"ok"})
+                if(trip.modifiedCount>0)
+                    return res.status(200).json({msg:"ok"})
+                return res.status(400).json({msg:"error"})
             }
            )
         
