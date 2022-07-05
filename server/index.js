@@ -15,8 +15,8 @@ const io=require('socket.io')(server)
 const PORT=process.env.PORT || 3000
 
 
-// const DB=process.env.DB_PASS
-const DB="mongodb+srv://eck_base:minnalproject@cluster0.35jc7.mongodb.net/?retryWrites=true&w=majority"
+const DB=process.env.DB_PASS
+
 //middleware
 app.use(express.json())
 // app.use(io)
