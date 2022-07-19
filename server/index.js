@@ -7,6 +7,7 @@ const http=require('http')
 const User = require("./models/user.js")
 const stopRouter = require("./trip/stoproute.js")
 const tripsRouter = require("./trip/triproute.js")
+const Stops = require("./models/stops.js")
 
 const app =express()
 const server=http.createServer(app)
@@ -39,7 +40,27 @@ io.on("connection",(socket)=>{
         console.log(msg)
        
             socket.emit('/message',"hoooi")
-        })
+     })
+     socket.on('/stopsearch',async(filter)=>{
+        console.log(filter)
+        try{
+            var regexp = new RegExp("^"+ filter);
+            const filteredStops= await Stops.find({
+                "name": {
+                  "$regex": regexp,
+                  "$options":"i"
+                }
+              },
+              (err, docs) => {
+                socket.emit('/filterstop',docs)
+              }
+            );
+          
+        }catch(e){
+            
+        }
+        
+     })
 })
 
 User.watch().on('change',async(data)=>{
