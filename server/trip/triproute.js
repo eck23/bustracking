@@ -1,18 +1,32 @@
 const express =require("express")
 const Trips = require("../models/trips")
+const webtoken=require("jsonwebtoken")
+const Admins = require("../models/admin")
 
 const tripsRouter=express.Router()
 
 tripsRouter.post("/api/addtrip",async(req,res)=>{
     
     try{
-        const {stops}=req.body
-
+        const {tripName,stops,maxRounds,token}=req.body
+        
+        verifyToken=webtoken.verify(token,"webtokenkey")
+        if(verifyToken==null)
+            return res.status(400).json({msg:"unauthorized user"})
+        
+        
         let Trip=Trips({
-            stops
+            tripName,
+            stops,
+            maxRounds
         })
+        
         Trip= await Trip.save();
-        return res.status(200).json(Trip)
+        console.log(Trip['_id'] )
+        console.log(verifyToken._id )
+        await Admins.updateOne( { _id: verifyToken._id },{ $push: {registeredTripId: Trip['_id'] } })
+
+        return res.status(200).json({msg:"Success"})
     }catch(e){
            return res.status(500).json({msg :"Error"})
     }
