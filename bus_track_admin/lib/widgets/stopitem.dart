@@ -1,3 +1,4 @@
+import 'package:bus_track_admin/screens/addtripscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -20,6 +21,12 @@ class _StopItemState extends State<StopItem> {
   TimeOfDay selectedTime = TimeOfDay.now();
 
   void initState() {
+    addedStops.add(stopDetails);
+    stopController.text = stopDetails.stopName;
+    for (int i = 0; i < addedStops.length; i++) {
+      print(
+          "${addedStops[i].stopName} ${addedStops[i].stopId}  ${addedStops[i].stopTimes}");
+    }
     super.initState();
   }
 
@@ -102,6 +109,7 @@ class _StopItemState extends State<StopItem> {
                 width: 100.w,
                 child: ListView.builder(
                   itemBuilder: ((context, index) {
+                    print(stopProvider.stopsSearchList);
                     return stopSearchItem(stopProvider.stopsSearchList[index]);
                   }),
                   itemCount: stopProvider.stopsSearchList.length,
@@ -116,9 +124,15 @@ class _StopItemState extends State<StopItem> {
                         i++) {
                       if (stopProvider.stopsSearchList[i]['name'] ==
                           stopSearchController.text.trim()) {
-                        stopDetails
-                            .updateStopName(stopSearchController.text.trim());
-                        stopController.text = stopSearchController.text.trim();
+                        stopDetails.stopName = stopSearchController.text;
+                        stopDetails.stopId =
+                            stopProvider.stopsSearchList[i]['_id'];
+                        stopDetails.latitude =
+                            stopProvider.stopsSearchList[i]['latitude'];
+                        stopDetails.longitude =
+                            stopProvider.stopsSearchList[i]['longitude'];
+
+                        stopController.text = stopDetails.stopName;
                         break;
                       }
                     }
@@ -138,7 +152,7 @@ class _StopItemState extends State<StopItem> {
         context: context,
         builder: (context) {
           return StatefulBuilder(builder: ((context, setState) {
-            stopTimeList = stopDetails.getStopTime;
+            // stopTimeList = stopDetails.stopTimes;
             return AlertDialog(
               title: Text("Stop Timings"),
               content: SizedBox(
@@ -146,9 +160,9 @@ class _StopItemState extends State<StopItem> {
                 width: 100.w,
                 child: ListView.builder(
                   itemBuilder: ((context, index) {
-                    return stopTimeItem(stopTimeList[index]);
+                    return stopTimeItem(stopDetails.stopTimes[index]);
                   }),
-                  itemCount: stopTimeList.length,
+                  itemCount: stopDetails.stopTimes.length,
                 ),
               ),
               actions: <Widget>[
@@ -157,8 +171,8 @@ class _StopItemState extends State<StopItem> {
                   onPressed: () async {
                     TimeOfDay? timepick = await showTimePicker(
                         context: context, initialTime: new TimeOfDay.now());
-                    setState(() =>
-                        stopDetails.updateStopTimeList(timepick.toString()));
+                    setState(
+                        () => stopDetails.stopTimes.add(timepick.toString()));
                   },
                 )
               ],

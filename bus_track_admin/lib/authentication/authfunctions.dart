@@ -21,6 +21,7 @@ class Auth {
       if (response.statusCode == 200) {
         var res = await jsonDecode(response.body);
 
+        print(res);
         Admin.username = res['username'];
 
         Admin.email = res['email'];
@@ -31,6 +32,7 @@ class Auth {
 
         Admin.token = res['token'];
 
+        Admin.registeredTripId = res['registeredTripId'];
         // await saveuser(res);
 
         return "OK";

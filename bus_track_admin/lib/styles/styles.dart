@@ -27,4 +27,6 @@ TextStyle welcomeHeading = GoogleFonts.roboto(
 TextStyle tripHeading = GoogleFonts.saira(
     color: Colors.black, fontSize: 10.sp, fontWeight: FontWeight.bold);
 
+TextStyle tripItemFont = GoogleFonts.roboto(
+    color: Colors.black, fontSize: 7.sp, fontWeight: FontWeight.bold);
 var buttonwidth = 50.w;

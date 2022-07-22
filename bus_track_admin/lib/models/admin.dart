@@ -4,5 +4,5 @@ class Admin {
   static String companyname = "";
   static String companytype = "";
   static String token = "";
-  static List<String> registeredTripId = [];
+  static List registeredTripId = [];
 }

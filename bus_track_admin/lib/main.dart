@@ -44,7 +44,7 @@ class Main extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 home: Provider.of<AuthListen>(context, listen: true).isSignedIn
                     ? Home()
-                    : Home());
+                    : Login());
           }),
         ));
   }
