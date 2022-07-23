@@ -14,11 +14,12 @@ tripsRouter.post("/api/addtrip", async (req, res) => {
         if (verifyToken == null)
             return res.status(400).json({ msg: "unauthorized user" })
 
-
+        currentRound=1;
         let Trip = Trips({
             tripName,
             stops,
-            maxRounds
+            maxRounds,
+            currentRound
         })
 
         Trip = await Trip.save();
@@ -79,7 +80,7 @@ tripsRouter.post("/api/updatetrip", async (req, res) => {
     }
 })
 
-tripsRouter.post('/api/getmytrips', async (req, res) => {
+tripsRouter.post('/api/admin/getmytrips', async (req, res) => {
 
     const { token } = req.body
     verifyToken = webtoken.verify(token, "webtokenkey")
@@ -105,6 +106,74 @@ tripsRouter.post('/api/getmytrips', async (req, res) => {
     }
     // console.log(trip)
     return res.status(200).json(tripDetails)
+})
+
+tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)=>{
+    var source=req.params.source
+    var destination=req.params.destination
+    var result=await Trips.find({'stops.stopName':{$all:[source,destination]}})
+    var finalresult=[];
+    for(var i=0;i<result.length;i++){
+        
+        var sourceFound=false
+        var stops_Time=[];
+        var stopName;
+        var currentStops=result[i]['stops']
+        var currentRound=result[i]['currentRound']
+        
+        if(currentRound%2!=0){
+            
+            console.log("in false")
+
+            for(var j=0;j<currentStops.length;j++){
+                stopName=currentStops[j]['stopName'];
+                stops_Time.push({stopName:stopName,stopTime:currentStops[j]['time'][currentRound-1]})
+                
+                if(stopName==source){
+                    sourceFound=true
+                }
+                if(stopName==destination){
+                    if(sourceFound==true){
+                        for(k=j+1;k<currentStops.length;k++){
+                            stopName=currentStops[k]['stopName'];
+                            stops_Time.push({stopName:stopName,stopTime:currentStops[k]['time'][currentRound-1]})
+                        }
+                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],stops_time:stops_Time})
+                        break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+        }
+        else{
+            console.log("in true")
+            for(var j=currentStops.length-1;j>=0;j--){
+                stopName=currentStops[j]['stopName'];
+                stops_Time.push({stopName:stopName,stopTime:currentStops[j]['time'][currentRound-1]})
+                
+                if(stopName==source){
+                    sourceFound=true
+                }
+                if(stopName==destination){
+                    if(sourceFound==true){
+                        for(k=j-1;k>=0;k--){
+                            stopName=currentStops[k]['stopName'];
+                            stops_Time.push({stopName:stopName,stopTime:currentStops[k]['time'][currentRound-1]})
+                        }
+                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],stops_time:stops_Time})
+                        
+                        break;
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return res.status(200).json(finalresult)
 })
 
 module.exports = tripsRouter
