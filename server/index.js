@@ -4,10 +4,11 @@ require('dotenv').config()
 const express=require("express")
 const mongoose=require("mongoose")
 const http=require('http')
-const User = require("./models/user.js")
+const Trips= require("./models/trips.js")
 const stopRouter = require("./trip/stoproute.js")
 const tripsRouter = require("./trip/triproute.js")
 const Stops = require("./models/stops.js")
+const { json } = require("express")
 
 const app =express()
 const server=http.createServer(app)
@@ -32,14 +33,27 @@ mongoose.connect(DB).then(()=>{
         console.log(e)
 })
 
+var tripId;
 
 io.on("connection",(socket)=>{
     console.log("connected to socket")
 
-    socket.on('/listenDB',async (msg)=>{
-        console.log(msg)
-       
-            socket.emit('/message',"hoooi")
+    socket.on('/getTripStatus',async (id)=>{
+        
+            
+            var tripdata=await Trips.find({_id:id})
+            var currentRound=tripdata[0]['currentRound']
+            var stops=tripdata[0]['stops']
+            var finalstops=[];
+            if(currentRound%2==0){
+              stops.reverse()
+            }
+            for(var i=0;i<stops.length;i++){
+                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound-1],isReached:stops[i]['isReached']})
+            }
+            var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],stops:finalstops}]
+            console.log(finaldata)
+            socket.emit('/returnData',finaldata)
      })
      socket.on('/stopsearch',async(filter)=>{
         console.log(filter)
@@ -63,10 +77,10 @@ io.on("connection",(socket)=>{
      })
 })
 
-User.watch().on('change',async(data)=>{
+Trips.watch().on('change',async(data)=>{
     
-    var users=await User.find()
-    io.emit("/datachange",users)
+   
+    io.emit("/datachange","data changed")
 
 })
 

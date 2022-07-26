@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-String url = "http://bustrack.azurewebsites.net";
-//String url="http://192.168.137.1:3000";
+import '../values/values.dart';
 
 class Auth {
   static getUserFromLocal() async {
