@@ -7,7 +7,7 @@ const Trips= require("./models/trips.js")
 const stopRouter = require("./trip/stoproute.js")
 const tripsRouter = require("./trip/triproute.js")
 const Stops = require("./models/stops.js")
-const { json } = require("express")
+
 
 const app =express()
 const server=http.createServer(app)
