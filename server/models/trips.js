@@ -15,7 +15,8 @@ const tripsSchema=mongoose.Schema({
         
     },
     maxRounds:{type:Number,required:true},
-    currentRound:{type:Number,required:true}
+    initialRound:{type:Number,required:true,default:0},
+    currentRound:{type:Number,required:true,default:0}
 })
 
 const Trips=mongoose.model('trips',tripsSchema)

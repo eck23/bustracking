@@ -14,12 +14,12 @@ tripsRouter.post("/api/addtrip", async (req, res) => {
         if (verifyToken == null)
             return res.status(400).json({ msg: "unauthorized user" })
 
-        currentRound=1;
+        
         let Trip = Trips({
             tripName,
             stops,
             maxRounds,
-            currentRound
+           
         })
 
         Trip = await Trip.save();
@@ -47,7 +47,7 @@ tripsRouter.get("/api/gettrips/:id", async (req, res) => {
 
                 }
 
-                return res.status(200).json({ id: doc._id, stopCoordinates: result });
+                return res.status(200).json({ id: doc._id, stopCoordinates: result ,currentRound:doc.currentRound,maxRounds:doc.maxRounds,initialRound: doc.initialRound});
             }
             return res.status(400).json({ msg: "Invalid ID" })
         });
@@ -57,6 +57,8 @@ tripsRouter.get("/api/gettrips/:id", async (req, res) => {
         return res.status(500).json({ msg: e })
     }
 })
+
+
 
 tripsRouter.post("/api/updatetrip", async (req, res) => {
 
@@ -108,6 +110,18 @@ tripsRouter.post('/api/admin/getmytrips', async (req, res) => {
     return res.status(200).json(tripDetails)
 })
 
+tripsRouter.post("/api/updateround",async(req,res)=>{
+
+    try{
+        const{id,currentRound,initialRound}=req.body;
+
+        await Trips.updateOne({_id:id},{"$set": { 'currentRound': currentRound, 'initialRound':initialRound} })
+        res.status(200).json({msg:"success"})
+    }catch(e){
+        res.status(500).json({msg:"error"})
+    }
+     
+})
 
 tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)=>{
     try{
@@ -120,8 +134,13 @@ tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)
         var sourceFound=false
         var stopName;
         var currentStops=result[i]['stops']
-        var currentRound=result[i]['currentRound']
+        var currentRound=result[i]['initialRound']
         
+        if(currentRound==0){
+            currentRound=currentStops[0]['time'].length
+            console.log(currentRound)
+        }
+
         if(currentRound%2==0){
             currentStops.reverse()
         }

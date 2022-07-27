@@ -3,6 +3,7 @@ import 'package:bus_tracking_app/authentication/authfunctions.dart';
 import 'package:bus_tracking_app/datamanage/data.dart';
 import 'package:bus_tracking_app/main.dart';
 import 'package:bus_tracking_app/screens/trips_display_screen.dart';
+import 'package:bus_tracking_app/screens/tripstatus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,8 @@ class _FirstPageState extends State<FirstPage> {
   TextEditingController stopController1 = TextEditingController();
   TextEditingController stopController2 = TextEditingController();
   TextEditingController stopSearchController = TextEditingController();
+
+  List searchResponse = [];
 
   @override
   void initState() {
@@ -51,8 +54,12 @@ class _FirstPageState extends State<FirstPage> {
     }
     print(response);
 
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => TripDisplay(response)));
+    // Navigator.of(context)
+    //     .push(MaterialPageRoute(builder: (_) => TripDisplay(response)));
+
+    setState(() {
+      searchResponse = response;
+    });
   }
 
   @override
@@ -60,6 +67,8 @@ class _FirstPageState extends State<FirstPage> {
     stopProvider = Provider.of<SearchProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
+        elevation: 2,
         actions: [
           IconButton(
               onPressed: () async {
@@ -68,65 +77,237 @@ class _FirstPageState extends State<FirstPage> {
               },
               icon: Icon(Icons.logout))
         ],
-        leading: const BackButton(color: Colors.white),
-        title: Text("FirstPage"),
+        // leading: const BackButton(color: Colors.white),
+        title: Text("Where's my Bus"),
       ),
-      body: Center(
+      backgroundColor: Colors.green,
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "Select Locations",
-              style: authHeading,
-            ),
+            if (searchResponse.isEmpty)
+              Padding(
+                padding: EdgeInsets.only(top: 100.h, bottom: 10.h),
+                child: Center(
+                    child: Column(
+                  children: [
+                    Icon(
+                      Icons.directions_bus_filled,
+                      size: 80.h,
+                    ),
+                    Text(
+                      "Search Buses",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                      ),
+                    )
+                  ],
+                )),
+              ),
             Padding(
-              padding: EdgeInsets.only(bottom: 10.h, top: 20.h),
-              child: textContainer("Enter Start Location", stopController1,
-                  () => searchDialog(stopController1)),
-            ),
-            Icon(Icons.arrow_downward),
-            Padding(
-              padding: EdgeInsets.only(top: 10.h, bottom: 40.h),
-              child: textContainer("Enter Destination Location",
-                  stopController2, () => searchDialog(stopController2)),
-            ),
+                padding: EdgeInsets.only(
+                    left: 10.w, right: 10.w, bottom: 20.h, top: 20.h),
+                child: searchContainer()),
             SizedBox(
                 width: 120.w,
                 height: 40.h,
-                child:
-                    ElevatedButton(onPressed: onSearch, child: Text("Search")))
+                child: ElevatedButton(
+                  onPressed: onSearch,
+                  child: Text("Search"),
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.red.shade700),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                      ))),
+                )),
+            if (searchResponse.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(top: 30.h),
+                child: stopsListContainer(),
+              )
           ],
         ),
       ),
     );
   }
 
-  Widget textContainer(
-      String hintText, TextEditingController controller, function) {
+  Widget stopsListContainer() {
     return Material(
       elevation: 5,
-      shadowColor: Colors.yellowAccent.shade700,
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.r), topRight: Radius.circular(30.r)),
       child: Container(
-        height: 70.h,
-        width: 250.w,
-        color: Colors.white,
-        child: Center(
-          child: TextField(
-            maxLines: 1,
-            onTap: function,
-            readOnly: true,
-            textInputAction: TextInputAction.none,
-            controller: controller,
-            style: TextStyle(fontSize: 15.sp, color: Colors.black),
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                hintText: hintText,
-                border: InputBorder.none,
-                hintStyle: const TextStyle(color: Colors.black)),
+        height: 370.h,
+        padding: EdgeInsets.all(30.w),
+        width: double.infinity,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.r),
+                topRight: Radius.circular(30.r))),
+        child: SizedBox(
+          height: 350.h,
+          width: 300.w,
+          child: ListView.separated(
+            separatorBuilder: ((context, index) => Divider(
+                  thickness: 0,
+                )),
+            itemBuilder: ((context, index) {
+              return tripItem(searchResponse[0]);
+            }),
+            itemCount: 10,
           ),
         ),
       ),
+    );
+  }
+
+  tripItem(var item) {
+    return InkWell(
+      onTap: () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => TripStatus(item['_id']))),
+      child: Container(
+          height: 80.h,
+          width: 200.w,
+          decoration: BoxDecoration(
+              color: Colors.grey.shade600,
+              borderRadius: BorderRadius.all(Radius.circular(20.r))),
+          child: Padding(
+            padding: EdgeInsets.only(left: 20.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      item['tripName'],
+                      style: TextStyle(
+                          fontSize: 15.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.h),
+                  child: Row(children: [
+                    Text(
+                        "Departure : ${item['sourceTime'].substring(10, item['sourceTime'].length - 1)}"),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20.w),
+                      child: Text(
+                          "Arrival : ${item['destinationTime'].substring(10, item['destinationTime'].length - 1)}"),
+                    ),
+                  ]),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget searchContainer() {
+    return Material(
+      borderRadius: BorderRadius.all(Radius.circular(20.r)),
+      elevation: 10,
+      color: Colors.white,
+      child: Row(children: [
+        Padding(
+          padding: EdgeInsets.only(left: 20.w),
+          child: SizedBox(
+            child: Column(
+              children: [
+                CircleAvatar(
+                  child: CircleAvatar(
+                    backgroundColor: Colors.blue.shade300,
+                    radius: 4.r,
+                  ),
+                  radius: 7.r,
+                  backgroundColor: Colors.blue.shade700,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 3.h, bottom: 3.h),
+                  child: Container(
+                    height: 20.h,
+                    width: 1.w,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+                CircleAvatar(
+                  child: CircleAvatar(
+                    backgroundColor: Colors.red.shade300,
+                    radius: 4.r,
+                  ),
+                  radius: 7.r,
+                  backgroundColor: Colors.red.shade700,
+                )
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 20.w),
+          child: SizedBox(
+            height: 120.h,
+            width: 180.w,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                textContainer("Start Location", stopController1,
+                    () => searchDialog(stopController1)),
+                Divider(
+                  height: 1,
+                  thickness: 2,
+                ),
+                textContainer("Destination Location", stopController2,
+                    () => searchDialog(stopController2))
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 30.w),
+          child: InkWell(
+            onTap: () {
+              var temp = stopController1.text;
+              stopController1.text = stopController2.text;
+              stopController2.text = temp;
+            },
+            child: CircleAvatar(
+                backgroundColor: Colors.grey.shade700,
+                radius: 25.r,
+                child: Center(
+                  child: SizedBox(
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_upward),
+                        Icon(Icons.arrow_downward)
+                      ],
+                    ),
+                  ),
+                )),
+          ),
+        )
+      ]),
+    );
+  }
+
+  Widget textContainer(
+      String hintText, TextEditingController controller, function) {
+    return TextField(
+      maxLines: 1,
+      onTap: function,
+      readOnly: true,
+      textInputAction: TextInputAction.none,
+      controller: controller,
+      style: TextStyle(fontSize: 15.sp, color: Colors.black),
+      textAlign: TextAlign.start,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.zero,
+          hintText: hintText,
+          border: InputBorder.none,
+          hintStyle: const TextStyle(color: Colors.black)),
     );
   }
 
