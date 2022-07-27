@@ -36,11 +36,6 @@ class _TripStatusState extends State<TripStatus> {
     super.initState();
   }
 
-  // void dispose() {
-  //   socket.disconnect();
-  //   super.dispose();
-  // }
-
   getTripdata() {
     socket.emit('/getTripStatus', widget.tripId);
   }
