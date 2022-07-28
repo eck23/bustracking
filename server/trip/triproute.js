@@ -115,10 +115,17 @@ tripsRouter.post("/api/updateround",async(req,res)=>{
     try{
         const{id,currentRound,initialRound}=req.body;
 
-        await Trips.updateOne({_id:id},{"$set": { 'currentRound': currentRound, 'initialRound':initialRound} })
+        await Trips.updateOne({_id:id},{"$set": {'currentRound': currentRound, 'initialRound':initialRound} })
+        
+        var result=await Trips.findOne({_id:id}).select({stops:1})
+        for(var i=0;i<result['stops'].length;i++){
+            await Trips.updateMany({_id:id,"stops.stopId":result['stops'][i]['stopId']},{"$set": {'stops.$.isReached':false}})
+        }
+       
+        // result=await Trips.findOne({_id:id})
         res.status(200).json({msg:"success"})
     }catch(e){
-        res.status(500).json({msg:"error"})
+        res.status(500).json({msg:e})
     }
      
 })

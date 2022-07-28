@@ -11,6 +11,7 @@ const tripsSchema=mongoose.Schema({
             latitude:{type:Number,required:true,trim:true},
             longitude:{type:Number,required:true,trim:true},
             time:{type:Array,required:true,trim:true},
+            arrivedtime:{type:Array,required:true,trim:true,default:"NA"},
             isReached:{type:Boolean,required:true},
         
     },

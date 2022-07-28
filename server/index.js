@@ -41,14 +41,19 @@ io.on("connection",(socket)=>{
         
             
             var tripdata=await Trips.find({_id:id})
-            var currentRound=tripdata[0]['currentRound']
+            var currentRound=tripdata[0]['initialRound']
             var stops=tripdata[0]['stops']
             var finalstops=[];
+
+            if(currentRound==0){
+              currentRound=stops[0]['time'].length
+              console.log(currentRound)
+          }
             if(currentRound%2==0){
               stops.reverse()
             }
             for(var i=0;i<stops.length;i++){
-                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound-1],isReached:stops[i]['isReached']})
+                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound-1],arrivedTime:stops[i]['arrivedtime'],isReached:stops[i]['isReached']})
             }
             var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],stops:finalstops}]
             console.log(finaldata)

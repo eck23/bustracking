@@ -67,8 +67,8 @@ class _FirstPageState extends State<FirstPage> {
     stopProvider = Provider.of<SearchProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        elevation: 2,
+        backgroundColor: Colors.grey.shade900,
+        elevation: 0,
         actions: [
           IconButton(
               onPressed: () async {
@@ -80,7 +80,7 @@ class _FirstPageState extends State<FirstPage> {
         // leading: const BackButton(color: Colors.white),
         title: Text("Where's my Bus"),
       ),
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.grey.shade900,
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -93,13 +93,12 @@ class _FirstPageState extends State<FirstPage> {
                   children: [
                     Icon(
                       Icons.directions_bus_filled,
+                      color: Colors.white,
                       size: 80.h,
                     ),
                     Text(
                       "Search Buses",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                      ),
+                      style: TextStyle(fontSize: 20.sp, color: Colors.white),
                     )
                   ],
                 )),
@@ -136,10 +135,11 @@ class _FirstPageState extends State<FirstPage> {
   Widget stopsListContainer() {
     return Material(
       elevation: 5,
+      shadowColor: Colors.white,
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30.r), topRight: Radius.circular(30.r)),
       child: Container(
-        height: 370.h,
+        height: 390.h,
         padding: EdgeInsets.all(30.w),
         width: double.infinity,
         decoration: BoxDecoration(
@@ -172,7 +172,7 @@ class _FirstPageState extends State<FirstPage> {
           height: 80.h,
           width: 200.w,
           decoration: BoxDecoration(
-              color: Colors.grey.shade600,
+              color: Colors.grey.shade900,
               borderRadius: BorderRadius.all(Radius.circular(20.r))),
           child: Padding(
             padding: EdgeInsets.only(left: 20.w),
@@ -185,7 +185,9 @@ class _FirstPageState extends State<FirstPage> {
                     Text(
                       item['tripName'],
                       style: TextStyle(
-                          fontSize: 15.sp, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -193,11 +195,21 @@ class _FirstPageState extends State<FirstPage> {
                   padding: EdgeInsets.only(top: 10.h),
                   child: Row(children: [
                     Text(
-                        "Departure : ${item['sourceTime'].substring(10, item['sourceTime'].length - 1)}"),
+                      "Departure : ${item['sourceTime']}",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold),
+                    ),
                     Padding(
                       padding: EdgeInsets.only(left: 20.w),
                       child: Text(
-                          "Arrival : ${item['destinationTime'].substring(10, item['destinationTime'].length - 1)}"),
+                        "Arrival : ${item['destinationTime']}",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ]),
                 ),

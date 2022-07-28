@@ -40,7 +40,11 @@ class _TripStatusState extends State<TripStatus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.grey.shade900,
         appBar: AppBar(
+          elevation: 2,
+          shadowColor: Colors.white,
+          backgroundColor: Colors.grey.shade900,
           title: tripData != null
               ? Text(
                   "${tripData[0]['tripName']}",
@@ -57,18 +61,16 @@ class _TripStatusState extends State<TripStatus> {
                   child: tripData != null
                       ? ListView.separated(
                           separatorBuilder: ((context, index) {
-                            return Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 54.w),
-                                    child: Icon(Icons.arrow_downward),
-                                  ),
-                                ],
-                              ),
-                              height: 50.h,
-                              width: 0.w,
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  right: 294.w,
+                                  left: 64.w,
+                                  top: 10.h,
+                                  bottom: 10.h),
+                              child: SizedBox(
+                                  height: 30.h,
+                                  width: 0.w,
+                                  child: Container(color: Colors.white)),
                             );
                           }),
                           itemBuilder: ((context, index) {
@@ -84,15 +86,35 @@ class _TripStatusState extends State<TripStatus> {
 
   Widget listItem(var item) {
     return ListTile(
+      textColor: Colors.white,
       leading: CircleAvatar(
-          radius: 50.r,
-          backgroundColor: item['isReached'] ? Colors.green : Colors.red),
+        backgroundColor: Colors.white,
+        radius: 50.r,
+        child: Center(
+          child: CircleAvatar(
+              radius: 20.r,
+              backgroundColor: item['isReached'] ? Colors.green : Colors.red),
+        ),
+      ),
       title: Text(
         "${item['stopName']}",
-        style: TextStyle(fontSize: 15.sp),
+        style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
       ),
-      trailing:
-          Text(item['stopTime'].substring(10, item['stopTime'].length - 1)),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (item['isReached'])
+            Padding(
+              padding: EdgeInsets.only(bottom: 5.h),
+              child: Text(
+                "Arrived: ${item['arrivedTime']}",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          Text("Departure: ${item['stopTime']}",
+              style: TextStyle(fontWeight: FontWeight.bold))
+        ],
+      ),
     );
   }
 }
