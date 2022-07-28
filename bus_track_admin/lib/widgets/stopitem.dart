@@ -171,8 +171,9 @@ class _StopItemState extends State<StopItem> {
                   onPressed: () async {
                     TimeOfDay? timepick = await showTimePicker(
                         context: context, initialTime: new TimeOfDay.now());
-                    setState(
-                        () => stopDetails.stopTimes.add(timepick.toString()));
+                    setState(() => stopDetails.stopTimes.add(timepick
+                        .toString()
+                        .substring(10, timepick.toString().length - 1)));
                   },
                 )
               ],

@@ -40,16 +40,13 @@ class _AddTripState extends State<AddTrip> {
     super.initState();
   }
 
-  onSave() {
+  onSave() async {
     List saveStopList = [];
 
     if (tripNameController.text.trim().isEmpty) {
       return;
     }
 
-    // if(int.tryParse(maxRoundsController.text.trim()) == null){
-    //   return;
-    // }
     int maxRounds = addedStops[0].stopTimes.length;
 
     if (maxRounds < 1) {
@@ -78,7 +75,16 @@ class _AddTripState extends State<AddTrip> {
       'token': Admin.token
     };
     var jsonTrip = jsonEncode(trip);
-    DataManage.saveTrip(jsonTrip);
+    var response = await DataManage.saveTrip(jsonTrip);
+
+    if (response == "success") {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Saved Successfully')));
+      Navigator.pop(context, "success");
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error occured while saving')));
+    }
   }
 
   @override

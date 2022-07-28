@@ -12,63 +12,81 @@ class TripScreen extends StatefulWidget {
 }
 
 class _TripScreenState extends State<TripScreen> {
+  addTripsScreen() async {
+    var response = await Navigator.push(
+        context, MaterialPageRoute(builder: ((context) => AddTrip())));
+
+    if (!mounted) return;
+
+    if (response == "success") {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // print(Admin.registeredTripId);
     return Scaffold(
-      body: Admin.registeredTripId.isNotEmpty
-          ? FutureBuilder(
-              future: DataManage.getmytrips(Admin.token),
-              builder: ((context, snapshot) {
-                if (snapshot.data != null &&
-                    snapshot.connectionState == ConnectionState.done) {
-                  var snap = snapshot.data as List;
-                  // print("hello");
-                  // for (var item in snap) {
-                  //   print(item['tripName']);
-                  // }
-                  return Container(
-                      height: 550.h,
-                      width: 500.w,
-                      padding: EdgeInsets.all(20),
-                      child: GridView.builder(
-                        itemCount: snap.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 3 / 2),
-                        itemBuilder: (BuildContext context, int index) {
-                          // print("hello ${snap[0]['tripName'].toString()}");
-                          return TripItem(snap[index]['tripName'].toString());
-                        },
-                      ));
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }))
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 5.h),
-                    child: Text(
-                      "No trips added yet",
-                      style: tripHeading,
+      body: FutureBuilder(
+          future: DataManage.getmytrips(Admin.token),
+          builder: ((context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.none) {
+              return Center(
+                child: Text(
+                  "Check Your Connection",
+                  style: TextStyle(fontSize: 15.sp),
+                ),
+              );
+            } else if (snapshot.data != null &&
+                snapshot.connectionState == ConnectionState.done) {
+              var snap = snapshot.data as List;
+              // print("hello");
+              // for (var item in snap) {
+              //   print(item['tripName']);
+              // }
+              return Container(
+                  height: 550.h,
+                  width: 500.w,
+                  padding: EdgeInsets.all(20),
+                  child: GridView.builder(
+                    itemCount: snap.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 3 / 2),
+                    itemBuilder: (BuildContext context, int index) {
+                      // print("hello ${snap[0]['tripName'].toString()}");
+                      return TripItem(snap[index]['tripName'].toString());
+                    },
+                  ));
+            } else if (snapshot.data == null &&
+                snapshot.connectionState == ConnectionState.done) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 5.h),
+                      child: Text(
+                        "No trips added yet",
+                        style: tripHeading,
+                      ),
                     ),
-                  ),
-                  addTripContainer(),
-                ],
-              ),
-            ),
+                    addTripContainer(),
+                  ],
+                ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          })),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange,
-        onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: ((context) => AddTrip()))),
+        onPressed: () => addTripsScreen(),
         child: Icon(Icons.add),
       ),
     );
@@ -76,11 +94,7 @@ class _TripScreenState extends State<TripScreen> {
 
   Widget addTripContainer() {
     return InkWell(
-      onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: ((context) => AddTrip()))),
-      // onTap: () async {
-      //   DataManage.getmytrips(Admin.token);
-      // },
+      onTap: () => addTripsScreen(),
       child: Material(
         elevation: 10,
         child: Container(
