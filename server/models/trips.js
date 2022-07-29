@@ -11,10 +11,11 @@ const tripsSchema=mongoose.Schema({
             latitude:{type:Number,required:true,trim:true},
             longitude:{type:Number,required:true,trim:true},
             time:{type:Array,required:true,trim:true},
-            arrivedtime:{type:Array,required:true,trim:true,default:"NA"},
+            arrivedtime:{type:String,required:true,trim:true},
             isReached:{type:Boolean,required:true},
         
     },
+    regno:{type:String,required:true,default:"NA"},
     maxRounds:{type:Number,required:true},
     initialRound:{type:Number,required:true,default:0},
     currentRound:{type:Number,required:true,default:0}

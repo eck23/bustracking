@@ -8,10 +8,15 @@ stopRouter.post("/api/addstop",async(req,res)=>{
      console.log("in add stop")
 
         try{
-            const {name,latitude,longitude}=req.body
+            const {stopId,name,latitude,longitude}=req.body
+            
+            var existingStop= await Stops.findOne({stopId})
+            
+            if(existingStop){
+                return res.status(400).json({msg:"stopId already exist"})
+            }
 
-            var existingStop= await Stops.findOne({name})
-
+            existingStop= await Stops.findOne({name})
             if(existingStop){
                 return res.status(400).json({msg:"stop name already exist"})
             }
@@ -23,12 +28,13 @@ stopRouter.post("/api/addstop",async(req,res)=>{
             }
 
             let stop=Stops({
+                stopId,
                 name,
                 latitude,
                 longitude
             })
-            await stop.save()
-            return res.status(200).json({msg:"successfully added"})
+            stop= await stop.save()
+            return res.status(200).json({msg:"successfully added",stop:stop})
 
 
         }catch(e){

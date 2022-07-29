@@ -1,13 +1,12 @@
-import 'package:bus_tracking_app/auth_Frontend/styles.dart';
 import 'package:bus_tracking_app/authentication/authfunctions.dart';
 import 'package:bus_tracking_app/datamanage/data.dart';
 import 'package:bus_tracking_app/main.dart';
-import 'package:bus_tracking_app/screens/trips_display_screen.dart';
 import 'package:bus_tracking_app/screens/tripstatus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../auth_Frontend/styles.dart';
 import '../connections/socket.dart';
 import '../providers/authlisten.dart';
 import '../providers/stopprovider.dart';
@@ -66,17 +65,10 @@ class _FirstPageState extends State<FirstPage> {
   Widget build(BuildContext context) {
     stopProvider = Provider.of<SearchProvider>(context, listen: false);
     return Scaffold(
+      drawer: showDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.grey.shade900,
         elevation: 0,
-        actions: [
-          IconButton(
-              onPressed: () async {
-                await Auth.signOut();
-                Provider.of<AuthListen>(context, listen: false).signOutUser();
-              },
-              icon: Icon(Icons.logout))
-        ],
         // leading: const BackButton(color: Colors.white),
         title: Text("Where's my Bus"),
       ),
@@ -385,6 +377,62 @@ class _FirstPageState extends State<FirstPage> {
         textColor: Colors.black,
         tileColor: Colors.white,
         onTap: () => stopSearchController.text = stop['name'],
+      ),
+    );
+  }
+
+  Widget showDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade900,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.directions_bus,
+                  color: Colors.white,
+                  size: 80.h,
+                ),
+                Text(
+                  "Where's my Bus",
+                  style: small.titleSmall,
+                )
+              ],
+            ),
+          ),
+          ListTile(
+            title: Text(
+              'Dev Info',
+              style: drawerFont,
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              // Navigator.push(
+              // context,
+              // MaterialPageRoute(builder: (context) => DevInfo()),
+              // );
+            },
+          ),
+          Divider(
+            height: 0.2,
+            thickness: 2,
+          ),
+          ListTile(
+            title: Text(
+              'LogOut',
+              style: drawerFont,
+            ),
+            onTap: () async {
+              await Auth.signOut();
+              Provider.of<AuthListen>(context, listen: false).signOutUser();
+            },
+          ),
+        ],
       ),
     );
   }

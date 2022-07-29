@@ -47,17 +47,69 @@ class _TripStatusState extends State<TripStatus> {
           backgroundColor: Colors.grey.shade900,
           title: tripData != null
               ? Text(
-                  "${tripData[0]['tripName']}",
+                  "View Bus Status",
                   style: TextStyle(fontSize: 20.sp),
                 )
               : null,
         ),
         body: Column(
           children: [
+            if (tripData != null)
+              Padding(
+                padding: EdgeInsets.only(
+                    top: 10.h, bottom: 10.h, left: 10.w, right: 10.w),
+                child: Stack(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Container(
+                          height: 40.h,
+                          width: 2.w,
+                          color: Colors.white,
+                        ),
+                        Container(
+                          height: 40.h,
+                          width: 2.w,
+                          color: Colors.white,
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.h),
+                      child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Colors.grey.shade800, width: 6),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10.h),
+                            child: ListTile(
+                              title: Text(
+                                "${tripData[0]['tripName']}",
+                                style: TextStyle(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Padding(
+                                  padding: EdgeInsets.only(top: 8.h),
+                                  child: Text(
+                                    "Registration No. : ${tripData[0]['regno']}",
+                                    style: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500),
+                                  )),
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+              ),
             Padding(
-              padding: EdgeInsets.only(top: 30.h),
+              padding: EdgeInsets.only(top: 20.h),
               child: Container(
-                  height: 560.h,
+                  height: 450.h,
                   child: tripData != null
                       ? ListView.separated(
                           separatorBuilder: ((context, index) {

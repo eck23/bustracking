@@ -33,12 +33,13 @@ tripsRouter.post("/api/addtrip", async (req, res) => {
     }
 })
 
-tripsRouter.get("/api/gettrips/:id", async (req, res) => {
+tripsRouter.get("/api/gettrips/:id/:regno", async (req, res) => {
     try {
 
         var _id = req.params.id
-
+        var regno=req.params.regno
         var result = []
+        await Trips.updateOne({_id:_id},{"$set":{"regno":regno}})
         var tripDetails = Trips.findById(_id).lean().exec(function (err, doc) {
 
             if (doc) {
@@ -62,12 +63,12 @@ tripsRouter.get("/api/gettrips/:id", async (req, res) => {
 
 tripsRouter.post("/api/updatetrip", async (req, res) => {
 
-    const { id, isReached, stopId } = req.body
+    const { id, isReached, stopId,arrivedtime } = req.body
 
     try {
         Trips.updateOne(
-            { "_id": id, "stops.stopId": stopId },
-            { "$set": { "stops.$.isReached": isReached } },
+            { "id": id, "stops.stopId": stopId },
+            { "$set": { "stops.$.isReached": isReached, "stops.$.arrivedtime":arrivedtime} },
             function (err, trip) {
                 if (trip.modifiedCount > 0)
                     return res.status(200).json({ msg: "ok" })
@@ -122,7 +123,7 @@ tripsRouter.post("/api/updateround",async(req,res)=>{
             await Trips.updateMany({_id:id,"stops.stopId":result['stops'][i]['stopId']},{"$set": {'stops.$.isReached':false}})
         }
        
-        // result=await Trips.findOne({_id:id})
+        
         res.status(200).json({msg:"success"})
     }catch(e){
         res.status(500).json({msg:e})
@@ -169,7 +170,7 @@ tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)
                     if(sourceFound==true){
                         destination=stopName
                         destinationTime=currentStops[j]['time'][currentRound-1]
-                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],source:source,sourceTime:sourceTime,destination:destination,destinationTime:destinationTime})
+                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],regno:result[i]['regno'],source:source,sourceTime:sourceTime,destination:destination,destinationTime:destinationTime})
                         break;
                     }
                     else{

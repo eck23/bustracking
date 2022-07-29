@@ -1,6 +1,11 @@
 const mongoose=require('mongoose')
 
 const stopsSchema=mongoose.Schema({
+    stopId:{
+        type:String,
+        required:true,
+        trim:true,
+    },
     name:{
         required:true,
         type:String,

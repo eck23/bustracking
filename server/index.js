@@ -55,7 +55,7 @@ io.on("connection",(socket)=>{
             for(var i=0;i<stops.length;i++){
                 finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound-1],arrivedTime:stops[i]['arrivedtime'],isReached:stops[i]['isReached']})
             }
-            var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],stops:finalstops}]
+            var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],regno:tripdata[0]['regno'],stops:finalstops}]
             console.log(finaldata)
             socket.emit('/returnData',finaldata)
      })

@@ -32,13 +32,8 @@ class _BusAppState extends State<BusApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(builder: (context, child) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Provider.of<AuthListen>(context, listen: true).isSignedIn
-            ? FirstPage()
-            : MyLogin(),
-      );
-    });
+    return Provider.of<AuthListen>(context, listen: true).isSignedIn
+        ? FirstPage()
+        : MyLogin();
   }
 }
