@@ -114,9 +114,9 @@ tripsRouter.post('/api/admin/getmytrips', async (req, res) => {
 tripsRouter.post("/api/updateround",async(req,res)=>{
 
     try{
-        const{id,currentRound,initialRound}=req.body;
+        const{id,initialRound}=req.body;
 
-        await Trips.updateOne({_id:id},{"$set": {'currentRound': currentRound, 'initialRound':initialRound} })
+        await Trips.updateOne({_id:id},{"$set": {'initialRound':initialRound} })
         
         var result=await Trips.findOne({_id:id}).select({stops:1})
         for(var i=0;i<result['stops'].length;i++){
@@ -129,6 +129,18 @@ tripsRouter.post("/api/updateround",async(req,res)=>{
         res.status(500).json({msg:e})
     }
      
+})
+
+tripsRouter.post("/api/updatecurrent",async(req,res)=>{
+
+   try{
+    const{id,currentRound}=req.body;
+    await Trips.updateOne({_id:id},{"$set": {'currentRound':currentRound} })
+    res.status(200).json({msg:"success"})
+   }catch(e){
+    res.status(500).json({msg:"error"})
+   }
+
 })
 
 tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)=>{

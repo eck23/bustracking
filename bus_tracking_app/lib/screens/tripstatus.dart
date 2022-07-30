@@ -126,9 +126,9 @@ class _TripStatusState extends State<TripStatus> {
                             );
                           }),
                           itemBuilder: ((context, index) {
-                            return listItem(tripData[0]['stops'][0]);
+                            return listItem(tripData[0]['stops'][index]);
                           }),
-                          itemCount: 20,
+                          itemCount: tripData[0]['stops'].length,
                         )
                       : Center(child: CircularProgressIndicator())),
             ),
@@ -154,17 +154,18 @@ class _TripStatusState extends State<TripStatus> {
       ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (item['isReached'])
-            Padding(
-              padding: EdgeInsets.only(bottom: 5.h),
-              child: Text(
-                "Arrived: ${item['arrivedTime']}",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5.h),
+            child: Text(
+              "Departure : ${item['stopTime']}",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          Text("Departure: ${item['stopTime']}",
-              style: TextStyle(fontWeight: FontWeight.bold))
+          ),
+          if (item['isReached'])
+            Text("Arrived      : ${item['arrivedTime']}",
+                style: TextStyle(fontWeight: FontWeight.bold))
         ],
       ),
     );

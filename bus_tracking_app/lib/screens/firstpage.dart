@@ -2,6 +2,7 @@ import 'package:bus_tracking_app/authentication/authfunctions.dart';
 import 'package:bus_tracking_app/datamanage/data.dart';
 import 'package:bus_tracking_app/main.dart';
 import 'package:bus_tracking_app/screens/tripstatus.dart';
+import 'package:bus_tracking_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -32,12 +33,23 @@ class _FirstPageState extends State<FirstPage> {
   onSearch() async {
     if (stopController1.text.trim().isEmpty ||
         stopController2.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please select the stops'),
+      ));
+      return;
+    }
+    if (stopController1.text == stopController2.text) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please select different stops'),
+      ));
       return;
     }
 
+    loading(context);
     var response = await DataManage.getTrips(
         stopController1.text.trim(), stopController2.text.trim());
 
+    Navigator.pop(context);
     if (response == "error") {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('An error occurred while searching'),
@@ -116,7 +128,7 @@ class _FirstPageState extends State<FirstPage> {
             if (searchResponse.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(top: 30.h),
-                child: stopsListContainer(),
+                child: tripsListContainer(),
               )
           ],
         ),
@@ -124,7 +136,7 @@ class _FirstPageState extends State<FirstPage> {
     );
   }
 
-  Widget stopsListContainer() {
+  Widget tripsListContainer() {
     return Material(
       elevation: 5,
       shadowColor: Colors.white,
@@ -147,9 +159,9 @@ class _FirstPageState extends State<FirstPage> {
                   thickness: 0,
                 )),
             itemBuilder: ((context, index) {
-              return tripItem(searchResponse[0]);
+              return tripItem(searchResponse[index]);
             }),
-            itemCount: 10,
+            itemCount: searchResponse.length,
           ),
         ),
       ),
