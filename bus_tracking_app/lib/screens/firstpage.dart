@@ -170,8 +170,8 @@ class _FirstPageState extends State<FirstPage> {
 
   tripItem(var item) {
     return InkWell(
-      onTap: () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => TripStatus(item['_id']))),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => TripStatus(item['_id'], item['stopOnReturn']))),
       child: Container(
           height: 80.h,
           width: 200.w,

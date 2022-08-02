@@ -145,9 +145,10 @@ tripsRouter.post("/api/updatecurrent",async(req,res)=>{
 
 tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)=>{
     try{
-        var source=req.params.source
+    var source=req.params.source
     var destination=req.params.destination
     var result=await Trips.find({'stops.stopName':{$all:[source,destination]}})
+    console.log(result)
     var finalresult=[];
     for(var i=0;i<result.length;i++){
         
@@ -155,6 +156,7 @@ tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)
         var stopName;
         var currentStops=result[i]['stops']
         var currentRound=result[i]['initialRound']
+        var maxRounds=result[i]['maxRounds']
         
         if(currentRound==0){
             currentRound=currentStops[0]['time'].length
@@ -164,7 +166,8 @@ tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)
         if(currentRound%2==0){
             currentStops.reverse()
         }
-            
+        
+        currentRound=currentRound-1
             
             var source;
             var destination;
@@ -175,17 +178,34 @@ tripsRouter.get("/api/get_trips_by_location/:source/:destination",async(req,res)
                 
                 if(stopName==source){
                     source=stopName
-                    sourceTime=currentStops[j]['time'][currentRound-1]
+                    sourceTime=currentStops[j]['time'][currentRound]
                     sourceFound=true
                 }
                 if(stopName==destination){
+                    destination=stopName
                     if(sourceFound==true){
-                        destination=stopName
-                        destinationTime=currentStops[j]['time'][currentRound-1]
-                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],regno:result[i]['regno'],source:source,sourceTime:sourceTime,destination:destination,destinationTime:destinationTime})
+                       
+                        destinationTime=currentStops[j]['time'][currentRound]
+                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],regno:result[i]['regno'],source:source,sourceTime:sourceTime,destination:destination,destinationTime:destinationTime,stopOnReturn:false})
                         break;
                     }
                     else{
+                        currentRound=currentRound+1
+                        
+                        if(currentRound==maxRounds){
+                            currentRound=0
+                        }
+
+                        destinationTime=currentStops[j]['time'][currentRound]
+                        for(var k=j+1;k<currentStops.length;k++){
+                            stopName=currentStops[k]['stopName'];
+                            if(stopName==source){
+                                source=stopName
+                                sourceTime=currentStops[k]['time'][currentRound]
+                                break;
+                            }
+                        }
+                        finalresult.push({_id:result[i]['_id'],tripName:result[i]['tripName'],regno:result[i]['regno'],source:source,sourceTime:sourceTime,destination:destination,destinationTime:destinationTime,stopOnReturn:true})
                         break;
                     }
                 }

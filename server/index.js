@@ -37,24 +37,42 @@ var tripId;
 io.on("connection",(socket)=>{
     console.log("connected to socket")
 
-    socket.on('/getTripStatus',async (id)=>{
+    socket.on('/getTripStatus',async (data)=>{
         
-            
+            var id=data['id']
+            var stopOnReturn=data['stopOnReturn']
             var tripdata=await Trips.find({_id:id})
             var currentRound=tripdata[0]['initialRound']
+            var maxRounds=tripdata[0]['maxRounds']
             var stops=tripdata[0]['stops']
             var finalstops=[];
-
+            
             if(currentRound==0){
               currentRound=stops[0]['time'].length
               console.log(currentRound)
-          }
-            if(currentRound%2==0){
+            }
+            if(currentRound%2==0 && stopOnReturn==false){
               stops.reverse()
             }
-            for(var i=0;i<stops.length;i++){
-                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound-1],arrivedTime:stops[i]['arrivedtime'],isReached:stops[i]['isReached']})
+            
+            currentRound=currentRound-1
+            
+            if(stopOnReturn==true){
+              // stops.reverse()
+              currentRound=currentRound+1
+              if(currentRound==maxRounds){
+                currentRound=0
+              }
             }
+            
+          
+            
+           
+
+            for(var i=0;i<stops.length;i++){
+                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound],arrivedTime:stops[i]['arrivedtime'],isReached:stops[i]['isReached']})
+            }
+            
             var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],regno:tripdata[0]['regno'],stops:finalstops}]
             console.log(finaldata)
             socket.emit('/returnData',finaldata)
