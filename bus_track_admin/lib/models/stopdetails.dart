@@ -4,6 +4,7 @@ class StopDetails {
   late var latitude;
   late var longitude;
   bool isReached = false;
+  String arrivedtime = "NA";
   List<String> stopTimes = [];
 
   // updateStopName(String name) {

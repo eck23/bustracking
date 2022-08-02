@@ -57,7 +57,8 @@ class _TripScreenState extends State<TripScreen> {
                         childAspectRatio: 3 / 2),
                     itemBuilder: (BuildContext context, int index) {
                       // print("hello ${snap[0]['tripName'].toString()}");
-                      return TripItem(snap[index]['tripName'].toString());
+                      return TripItem(
+                          snap[index]['tripName'], snap[index]['tripName']);
                     },
                   ));
             } else if (snapshot.data == null &&

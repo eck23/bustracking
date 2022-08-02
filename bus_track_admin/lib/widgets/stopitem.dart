@@ -126,7 +126,7 @@ class _StopItemState extends State<StopItem> {
                           stopSearchController.text.trim()) {
                         stopDetails.stopName = stopSearchController.text;
                         stopDetails.stopId =
-                            stopProvider.stopsSearchList[i]['_id'];
+                            stopProvider.stopsSearchList[i]['stopId'];
                         stopDetails.latitude =
                             stopProvider.stopsSearchList[i]['latitude'];
                         stopDetails.longitude =

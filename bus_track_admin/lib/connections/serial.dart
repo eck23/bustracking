@@ -23,18 +23,11 @@ class _HomeScreenState extends State<HomeScreen> {
     print(_serialPort.address);
 
     if (_serialPort == null) {
-      print("exit");
+      // print("exit");
       return;
     }
-    // if (_serialPort.isOpen) {
-    //   print("closing");
-    //   _serialPort.close();
-    //   print('${_serialPort.name} closed!');
-    // } else {
     if (_serialPort.open(mode: SerialPortMode.write)) {
       SerialPortConfig config = _serialPort.config;
-      // https://www.sigrok.org/api/libserialport/0.1.1/a00007.html#gab14927cf0efee73b59d04a572b688fa0
-      // https://www.sigrok.org/api/libserialport/0.1.1/a00004_source.html
       config.baudRate = 9600;
       config.parity = 0;
       config.bits = 8;
@@ -47,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
         debugPrint('${_serialPort.name} opened!');
       }
     }
-    //   }
 
     if (_serialPort.isOpen) {
       if (_serialPort.write(Uint8List.fromList(send.codeUnits)) ==

@@ -64,6 +64,7 @@ class _AddTripState extends State<AddTrip> {
         'latitude': addedStops[i].latitude,
         'longitude': addedStops[i].longitude,
         'time': addedStops[i].stopTimes,
+        'arrivedtime': addedStops[i].arrivedtime,
         'isReached': addedStops[i].isReached
       });
     }
