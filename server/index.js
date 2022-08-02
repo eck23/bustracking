@@ -40,40 +40,34 @@ io.on("connection",(socket)=>{
     socket.on('/getTripStatus',async (data)=>{
         
             var id=data['id']
-            var stopOnReturn=data['stopOnReturn']
+            var index=data['index']
             var tripdata=await Trips.find({_id:id})
-            var currentRound=tripdata[0]['initialRound']
+            var initialRound=tripdata[0]['initialRound']
+            var currentRound=tripdata[0]['currentRound']
             var maxRounds=tripdata[0]['maxRounds']
             var stops=tripdata[0]['stops']
             var finalstops=[];
             
-            if(currentRound==0){
-              currentRound=stops[0]['time'].length
-              console.log(currentRound)
-            }
-            if(currentRound%2==0 && stopOnReturn==false){
-              stops.reverse()
+            if(index%2!=0){
+                stops.reverse()
             }
             
-            currentRound=currentRound-1
-            
-            if(stopOnReturn==true){
-              // stops.reverse()
-              currentRound=currentRound+1
-              if(currentRound==maxRounds){
-                currentRound=0
-              }
+            var temp=index+1
+            var tripStarted=true
+            if(temp==maxRounds){
+              temp=0;
             }
-            
-          
+            if(temp!=initialRound || initialRound==currentRound){
+               tripStarted=false
+            }
             
            
 
             for(var i=0;i<stops.length;i++){
-                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][currentRound],arrivedTime:stops[i]['arrivedtime'],isReached:stops[i]['isReached']})
+                finalstops.push({stopName:stops[i]['stopName'],stopTime:stops[i]['time'][index],arrivedTime:stops[i]['arrivedtime'],isReached:stops[i]['isReached']})
             }
             
-            var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],regno:tripdata[0]['regno'],stops:finalstops}]
+            var finaldata=[{_id:tripdata[0]['_id'],tripName:tripdata[0]['tripName'],regno:tripdata[0]['regno'],stops:finalstops,tripStarted:tripStarted}]
             console.log(finaldata)
             socket.emit('/returnData',finaldata)
      })

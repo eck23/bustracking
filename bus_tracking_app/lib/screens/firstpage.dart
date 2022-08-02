@@ -85,53 +85,48 @@ class _FirstPageState extends State<FirstPage> {
         title: Text("Where's my Bus"),
       ),
       backgroundColor: Colors.grey.shade900,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (searchResponse.isEmpty)
-              Padding(
-                padding: EdgeInsets.only(top: 100.h, bottom: 10.h),
-                child: Center(
-                    child: Column(
-                  children: [
-                    Icon(
-                      Icons.directions_bus_filled,
-                      color: Colors.white,
-                      size: 80.h,
-                    ),
-                    Text(
-                      "Search Buses",
-                      style: TextStyle(fontSize: 20.sp, color: Colors.white),
-                    )
-                  ],
-                )),
-              ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (searchResponse.isEmpty)
+            Center(
+                child: Column(
+              children: [
+                Icon(
+                  Icons.directions_bus_filled,
+                  color: Colors.white,
+                  size: 80.h,
+                ),
+                Text(
+                  "Search Buses",
+                  style: TextStyle(fontSize: 20.sp, color: Colors.white),
+                )
+              ],
+            )),
+          Padding(
+              padding: EdgeInsets.only(
+                  left: 10.w, right: 10.w, bottom: 20.h, top: 20.h),
+              child: searchContainer()),
+          SizedBox(
+              width: 120.w,
+              height: 40.h,
+              child: ElevatedButton(
+                onPressed: onSearch,
+                child: Text("Search"),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red.shade700),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                    ))),
+              )),
+          if (searchResponse.isNotEmpty)
             Padding(
-                padding: EdgeInsets.only(
-                    left: 10.w, right: 10.w, bottom: 20.h, top: 20.h),
-                child: searchContainer()),
-            SizedBox(
-                width: 120.w,
-                height: 40.h,
-                child: ElevatedButton(
-                  onPressed: onSearch,
-                  child: Text("Search"),
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red.shade700),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.r)),
-                      ))),
-                )),
-            if (searchResponse.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.only(top: 30.h),
-                child: tripsListContainer(),
-              )
-          ],
-        ),
+              padding: EdgeInsets.only(top: 30.h),
+              child: tripsListContainer(),
+            )
+        ],
       ),
     );
   }
@@ -143,7 +138,7 @@ class _FirstPageState extends State<FirstPage> {
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30.r), topRight: Radius.circular(30.r)),
       child: Container(
-        height: 390.h,
+        height: 370.h,
         padding: EdgeInsets.all(30.w),
         width: double.infinity,
         decoration: BoxDecoration(
@@ -171,7 +166,8 @@ class _FirstPageState extends State<FirstPage> {
   tripItem(var item) {
     return InkWell(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => TripStatus(item['_id'], item['stopOnReturn']))),
+          builder: (_) =>
+              TripStatus(item['_id'], item['index'], item['maxRounds']))),
       child: Container(
           height: 80.h,
           width: 200.w,
