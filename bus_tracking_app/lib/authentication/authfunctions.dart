@@ -35,7 +35,7 @@ class Auth {
               jsonEncode({"email": email, "password": password, "name": name}),
           headers: <String, String>{'content-type': "application/json"});
 
-      print("status code  :${response.statusCode}");
+      // print("status code  :${response.statusCode}");
 
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);

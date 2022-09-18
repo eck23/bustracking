@@ -25,7 +25,7 @@ class _TripStatusState extends State<TripStatus> {
 
     socket.on('/returnData', (data) {
       tripData = data;
-      print(tripData);
+      // print(tripData);
 
       if (this.mounted) setState(() {});
     });

@@ -44,7 +44,7 @@ tripsRouter.get("/api/gettrips/:id/:regno", async (req, res) => {
 
             if (doc) {
                 for (var item in doc.stops) {
-                    result.push({ stopId: doc.stops[item].stopId, lat: doc.stops[item].latitude, long: doc.stops[item].longitude })
+                    result.push({ stopId: doc.stops[item].stopId, lat: doc.stops[item].latitude, long: doc.stops[item].longitude,isReached: doc.stops[item].isReached})
 
                 }
 

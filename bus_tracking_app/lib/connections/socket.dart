@@ -12,7 +12,7 @@ void connect() {
   socket.connect();
 
   socket.onConnect((data) {
-    print("flutter connected to socket");
+    // print("flutter connected to socket");
 
     socket.on('/message', (data) => print(data));
 

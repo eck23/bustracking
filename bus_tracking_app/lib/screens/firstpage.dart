@@ -413,23 +413,23 @@ class _FirstPageState extends State<FirstPage> {
               ],
             ),
           ),
-          ListTile(
-            title: Text(
-              'Dev Info',
-              style: drawerFont,
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigator.push(
-              // context,
-              // MaterialPageRoute(builder: (context) => DevInfo()),
-              // );
-            },
-          ),
-          Divider(
-            height: 0.2,
-            thickness: 2,
-          ),
+          // ListTile(
+          //   title: Text(
+          //     'Dev Info',
+          //     style: drawerFont,
+          //   ),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => DevInfo()),
+          //     );
+          //   },
+          // ),
+          // Divider(
+          //   height: 0.2,
+          //   thickness: 2,
+          // ),
           ListTile(
             title: Text(
               'LogOut',
